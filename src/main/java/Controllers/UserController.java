@@ -12,7 +12,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import DataModels.User.User;
+import DataModels.User;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -101,9 +101,9 @@ public class UserController {
 			// checking if email exists
 			if (!isEmailInUse(email)) {
 				throw new Exception("User does not exist");
-			}
+			} else
 			// checking if password is correct
-			if (isEmailInUse(email)) {
+			{
 				TypedQuery<User> query = em.createQuery(
 						"SELECT u FROM User u WHERE u.email = :email AND u.password = :password", User.class);
 				query.setParameter("email", email);
