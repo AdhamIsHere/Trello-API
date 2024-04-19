@@ -17,6 +17,7 @@ import DataModels.User.User;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
@@ -107,7 +108,7 @@ public class UserController {
 						"SELECT u FROM User u WHERE u.email = :email AND u.password = :password", User.class);
 				query.setParameter("email", email);
 				query.setParameter("password", password);
-				
+
 				List<User> resultList = query.getResultList();
 				if (resultList.isEmpty()) {
 					throw new Exception("Incorrect password");
@@ -127,10 +128,38 @@ public class UserController {
 		List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
 		return Response.ok(users).type(MediaType.APPLICATION_JSON).build();
 	}
-	
+
 	@GET
 	@Path("/loggedIn")
 	public Response getLoggedInUser() {
 		return Response.ok(loggedInUser).type(MediaType.APPLICATION_JSON).build();
+	}
+
+	@PUT
+	@Path("/update")
+	public Response updateUser(User user) {
+		try {
+			// checking if user object is null
+			if (loggedInUser == null) {
+				throw new Exception("Log in first");
+			}
+			// checking if name is changed
+			if (user.getName() != null) {
+				loggedInUser.setName(user.getName());
+			}
+			// checking if email is changed
+			if (user.getEmail() != null) {
+				loggedInUser.setEmail(user.getEmail());
+			}
+			// checking if password is changed
+			if (user.getPassword() != null) {
+				loggedInUser.setPassword(user.getPassword());
+			}
+			em.merge(loggedInUser);
+			return Response.ok(user).type(MediaType.APPLICATION_JSON).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage() + "\n" + user)
+					.type(MediaType.APPLICATION_JSON).build();
+		}
 	}
 }
