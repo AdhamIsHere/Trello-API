@@ -105,7 +105,7 @@ public class UserController {
 			// checking if password is correct
 			{
 				TypedQuery<User> query = em.createQuery(
-						"SELECT u FROM User u WHERE u.email = :email AND u.password = :password", User.class);
+						"SELECT u FROM User u LEFT JOIN FETCH u.OwnedBoards LEFT JOIN FETCH u.CollaboratedBoards WHERE u.email = :email AND u.password = :password", User.class);
 				query.setParameter("email", email);
 				query.setParameter("password", password);
 
@@ -125,9 +125,10 @@ public class UserController {
 	@GET
 	@Path("/all")
 	public Response getAllUsers() {
-		List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
-		return Response.ok(users).type(MediaType.APPLICATION_JSON).build();
+	    List<User> users = em.createQuery("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.OwnedBoards LEFT JOIN FETCH u.CollaboratedBoards", User.class).getResultList();
+	    return Response.ok(users).type(MediaType.APPLICATION_JSON).build();
 	}
+
 
 	@GET
 	@Path("/loggedIn")

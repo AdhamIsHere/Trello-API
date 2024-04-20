@@ -1,10 +1,15 @@
 package DataModels;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -17,6 +22,7 @@ public class Board {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
+
 	@NotNull
 	private String name;
 
@@ -24,8 +30,15 @@ public class Board {
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "owner_id")
+	
 	private User owner;
 
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name ="UserXBoard", 
+	joinColumns = @JoinColumn(name = "board_id"), 
+	inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private Set<User> collaborators;
+	
 	public Board() {
 
 	}
@@ -54,6 +67,13 @@ public class Board {
 		this.name = name;
 	}
 
+	public Set<User> getCollaborators() {
+		return collaborators;
+	}
+	
+	public void setCollaborators(Set<User> collaborators) {
+		this.collaborators = collaborators;
+	}
 	@Override
 	public String toString() {
 		return "Board [id=" + id + ", name=" + name + "]";
