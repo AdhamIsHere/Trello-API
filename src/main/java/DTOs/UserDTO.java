@@ -1,8 +1,8 @@
-package DataModels;
+package DTOs;
 
 import java.io.Serializable;
 import java.util.Set;
-import javax.persistence.Entity;
+
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,73 +13,66 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
-@Entity
-public class User implements Serializable {
+import DataModels.Board;
+import DataModels.Card;
+import DataModels.Comment;
+import DataModels.User;
+
+public class UserDTO implements Serializable{
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
-	@NotNull
+	
 	private String name;
-	@NotNull
+
 	private String email;
-	@NotNull
+
 	private String password;
 	
-
-	@OneToMany(mappedBy = "owner",fetch=FetchType.LAZY)
 	private Set<Board> ownedBoards;
 	
-	@ManyToMany(mappedBy = "collaborators" ,fetch=FetchType.LAZY)
 	private Set<Board> collaboratedBoards;
 	
-	
-	@OneToMany(mappedBy = "author",fetch=FetchType.LAZY)
 	private Set<Comment> comments;
 	
-	
-	@ManyToMany(fetch=FetchType.LAZY)
-	@JoinTable(name ="UserXCard", 
-	joinColumns = @JoinColumn(name = "card_id"), 
-	inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<Card> assignedCards;
-	
-	public User() {
-		
-	}
 
-	public User(String name, String email, String password) {
-		this.name = name;
-		this.email = email;
-		this.password = password;
+	public UserDTO(User user) {
+		this.userId = user.getUserId();
+		this.name = user.getName();
+		this.email = user.getEmail();
+		this.password = user.getPassword();
+		this.ownedBoards = user.getOwnedBoards();
+		this.collaboratedBoards = user.getCollaboratedBoards();
+		this.comments = user.getComments();
+		this.assignedCards = user.getAssignedCards();
 	}
 
 	public Long getUserId() {
 		return userId;
 	}
-	
-	public void setUserId(Long id) {
-		this.userId = id;
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
-	
+
 	public String getName() {
 		return name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getPassword() {
-		return password;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 
 	public void setPassword(String password) {
@@ -89,19 +82,19 @@ public class User implements Serializable {
 	public Set<Board> getOwnedBoards() {
 		return ownedBoards;
 	}
-	
+
 	public void setOwnedBoards(Set<Board> ownedBoards) {
 		this.ownedBoards = ownedBoards;
 	}
-	
+
 	public Set<Board> getCollaboratedBoards() {
 		return collaboratedBoards;
 	}
-	
+
 	public void setCollaboratedBoards(Set<Board> collaboratedBoards) {
 		this.collaboratedBoards = collaboratedBoards;
 	}
-	
+
 	public Set<Comment> getComments() {
 		return comments;
 	}
@@ -109,26 +102,21 @@ public class User implements Serializable {
 	public void setComments(Set<Comment> comments) {
 		this.comments = comments;
 	}
-	
+
 	public Set<Card> getAssignedCards() {
 		return assignedCards;
 	}
-	
+
 	public void setAssignedCards(Set<Card> assignedCards) {
 		this.assignedCards = assignedCards;
-	}
-	
-	public Board getBoard(String boardName) {
-		for (Board board : ownedBoards) {
-			if (board.getName().equals(boardName)) {
-				return board;
-			}
-		}
-		return null;
 	}
 
 	@Override
 	public String toString() {
-		return "User [id=" + userId + ", name=" + name + ", email=" + email + ", password=" + password + "]";
+		return "UserDTO [userId=" + userId + ", name=" + name + ", email=" + email + ", password=" + password
+				+ ", ownedBoards=" + ownedBoards + ", collaboratedBoards=" + collaboratedBoards + ", comments="
+				+ comments + ", assignedCards=" + assignedCards + "]";
 	}
+	
+
 }

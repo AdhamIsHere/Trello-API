@@ -1,5 +1,6 @@
 package DataModels;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -11,52 +12,56 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "Board", uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
-public class Board {
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+public class Board implements Serializable{
+
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String id;
+	private Long boardId;
 
 	@NotNull
 	private String name;
 
 	// owner of the board (user)
 	@NotNull
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "owner_id")
-	
 	private User owner;
 
-	@ManyToMany(fetch=FetchType.LAZY)
-	@JoinTable(name ="UserXBoard", 
-	joinColumns = @JoinColumn(name = "board_id"), 
-	inverseJoinColumns = @JoinColumn(name = "user_id"))
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "UserXBoard", 
+	joinColumns = @JoinColumn(name = "boardId"),
+	inverseJoinColumns = @JoinColumn(name = "userId"))
 	private Set<User> collaborators;
-	
+
+	@OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+	private Set<CardList> cardLists;
+
 	public Board() {
 
 	}
 
+	public Long getBoardId() {
+		return boardId;
+	}
+	
+	public void setBoardId(Long id) {
+		boardId = id;
+	}
+	
 	public User getOwner() {
 		return owner;
 	}
 
 	public void setOwner(User owner) {
 		this.owner = owner;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getName() {
@@ -70,13 +75,29 @@ public class Board {
 	public Set<User> getCollaborators() {
 		return collaborators;
 	}
-	
+
 	public void setCollaborators(Set<User> collaborators) {
 		this.collaborators = collaborators;
 	}
+
+	public Set<CardList> getCardLists() {
+		return cardLists;
+	}
+
+	public void setCardLists(Set<CardList> cardLists) {
+		this.cardLists = cardLists;
+	}
+
 	@Override
 	public String toString() {
-		return "Board [id=" + id + ", name=" + name + "]";
+		return "Board [ Id= "+ boardId+",name= " + name + "]";
+	}
+
+	public void addCardList(String name) {
+		CardList cardList = new CardList();
+		cardList.setName(name);
+		cardLists.add(cardList);
+
 	}
 
 }
