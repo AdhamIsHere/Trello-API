@@ -17,6 +17,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 public class Board implements Serializable{
@@ -32,7 +34,8 @@ public class Board implements Serializable{
 	// owner of the board (user)
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "owner_id")
+	@JoinColumn(name = "ownerId")
+	@JsonBackReference
 	private User owner;
 
 	@ManyToMany(fetch = FetchType.LAZY)

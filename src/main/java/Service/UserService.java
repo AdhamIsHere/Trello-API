@@ -1,6 +1,5 @@
 package Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import Beans.LoggedUser;
-import DTOs.UserDTO;
+import DTOs.LoginData;
 import DataModels.User;
 
 
@@ -75,12 +74,10 @@ public class UserService {
 	}
 
 	
-	public Response loginUser(@QueryParam("email") String email, @QueryParam("password") String password) {
+	public Response loginUser(LoginData loginData) {
 		try {
-//			// checking if there is a logged in user
-//			if (loggedInUser != null) {
-//				throw new Exception("A User is already logged in");
-//			}
+			String email = loginData.getEmail();
+        	String password = loginData.getPassword();
 			// checking if email is null
 			if (email == null) {
 				throw new Exception("Email is null");
@@ -100,7 +97,11 @@ public class UserService {
 			// checking if password is correct
 			{
 				TypedQuery<User> query = em.createQuery(
-						"SELECT u FROM User u LEFT JOIN FETCH u.ownedBoards LEFT JOIN FETCH u.collaboratedBoards LEFT JOIN FETCH u.comments LEFT JOIN FETCH u.assignedCards"
+						"SELECT u FROM User u "
+						+ "LEFT JOIN FETCH u.collaboratedBoards "
+						+ "LEFT JOIN FETCH u.comments "
+						+ "LEFT JOIN FETCH u.assignedCards "
+						+ "LEFT JOIN FETCH u.ownedBoards "
 						+ " WHERE u.email = :email AND u.password = :password", User.class);
 				query.setParameter("email", email);
 				query.setParameter("password", password);
@@ -121,15 +122,12 @@ public class UserService {
 	
 	public Response getAllUsers() {
 	    List<User> users = em.createQuery("SELECT DISTINCT u FROM User u "
-	    		+ "LEFT JOIN FETCH u.ownedBoards "
 	    		+ "LEFT JOIN FETCH u.collaboratedBoards "
 	    		+ "LEFT JOIN FETCH u.comments "
-	    		+ "LEFT JOIN FETCH u.assignedCards", User.class).getResultList();
-	    List<UserDTO> userDTOs = new ArrayList<>();
-		for (User user : users) {
-			userDTOs.add(new UserDTO(user));
-		}
-	    return Response.ok(userDTOs).type(MediaType.APPLICATION_JSON).build();
+	    		+ "LEFT JOIN FETCH u.ownedBoards "
+	    		+ "LEFT JOIN FETCH u.assignedCards ", User.class).getResultList();
+	 
+	    return Response.ok(users).type(MediaType.APPLICATION_JSON).build();
 	}
 
 
@@ -142,25 +140,28 @@ public class UserService {
 	public Response updateUser(User user) {
 		try {
 			// checking if user object is null
-			if (loggedInUser == null) {
+			if (loggedInUser.isLoggedIn() == false) {
 				throw new Exception("Log in first");
 			}
+			
+			User UpdatedUser = em.find(User.class, loggedInUser.getLoggedUser().getUserId());
+			
 			// checking if name is changed
 			if (user.getName() != null) {
-				loggedInUser.getLoggedUser().setName(user.getName());
+				UpdatedUser.setName(user.getName());
 			}
 			// checking if email is changed
 			if (user.getEmail() != null) {
-				loggedInUser.getLoggedUser().setEmail(user.getEmail());
+				UpdatedUser.setEmail(user.getEmail());
 			}
 			// checking if password is changed
 			if (user.getPassword() != null) {
-				loggedInUser.getLoggedUser().setPassword(user.getPassword());
+				UpdatedUser.setPassword(user.getPassword());
 			}
-			em.merge(loggedInUser);
+			em.merge(UpdatedUser);
 			return Response.ok(user).type(MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage() + "\n" + user)
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage() + "\n" + user )
 					.type(MediaType.APPLICATION_JSON).build();
 		}
 	}

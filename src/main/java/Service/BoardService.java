@@ -29,6 +29,7 @@ public class BoardService {
 	public Response createBoard(Board board) {
 		try {
 			board.setOwner(loggedInUser.getLoggedUser());
+			loggedInUser.getLoggedUser().getOwnedBoards().add(board);
 			em.persist(board);
 			return Response.ok(board).type(MediaType.APPLICATION_JSON).build();
 		} catch (ConstraintViolationException e) {
@@ -43,7 +44,7 @@ public class BoardService {
 	public Response getMyBoards() {
 		try {
 			TypedQuery<Board> query = em.createQuery("SELECT b FROM Board b WHERE b.owner = :owner", Board.class);
-			query.setParameter("owner", loggedInUser.getLoggedUser());
+			query.setParameter("owner", loggedInUser.getLoggedUser().getEmail());
 			List<Board> resultList = query.getResultList();
 			return Response.ok(resultList).type(MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
@@ -54,12 +55,16 @@ public class BoardService {
 
 	public Response inviteUserToBoard(@QueryParam("email") String email, @QueryParam("board") String boardName) {
 		try {
-			TypedQuery<Board> query = em.createQuery("SELECT b FROM Board b JOIN FETCH b.owner WHERE b.name = :name",
+			TypedQuery<Board> query = em.createQuery(
+					"SELECT b FROM Board b JOIN FETCH b.cardLists JOIN FETCH b.collaborators WHERE b.name = :name",
 					Board.class);
 			query.setParameter("name", boardName);
-			Board board = query.getSingleResult();
+			List<Board> board = query.getResultList();
 			TypedQuery<User> query2 = em.createQuery(
-					"SELECT u FROM User u LEFT JOIN FETCH u.OwnedBoards LEFT JOIN FETCH u.CollaboratedBoards  WHERE u.email = :email",
+					"SELECT u FROM User u " + "LEFT JOIN FETCH u.collaboratedBoards " + "LEFT JOIN FETCH u.comments "
+							+ "LEFT JOIN FETCH u.assignedCards " + "LEFT JOIN FETCH u.ownedBoards "
+							+ "WHERE u.email = :email",
+
 					User.class);
 			query2.setParameter("email", email);
 			User user;
@@ -69,11 +74,13 @@ public class BoardService {
 				return Response.status(Response.Status.NOT_FOUND).entity("User not found")
 						.type(MediaType.APPLICATION_JSON).build();
 			}
-			board.getCollaborators().add(user);
-			return Response.ok("Done").type(MediaType.APPLICATION_JSON).build();
+			board.get(0).getCollaborators().add(user);
+			return Response.ok(board).type(MediaType.APPLICATION_JSON).build();
 		} catch (NoResultException ex) {
-			return Response.status(Response.Status.NOT_FOUND).entity("Board not found").type(MediaType.APPLICATION_JSON)
-					.build();
+
+			return Response.status(Response.Status.NOT_FOUND).entity("Board not found: " + boardName)
+					.type(MediaType.APPLICATION_JSON).build();
+
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
 					.type(MediaType.APPLICATION_JSON).build();
@@ -83,7 +90,8 @@ public class BoardService {
 	public Response getAllBoards() {
 		try {
 			TypedQuery<Board> query = em.createQuery(
-					"SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.collaborators LEFT JOIN FETCH b.owner LEFT JOIN FETCH b.cardLists ", Board.class);
+					"SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.collaborators LEFT JOIN FETCH b.cardLists ",
+					Board.class);
 			List<Board> resultList = query.getResultList();
 			return Response.ok(resultList).type(MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {

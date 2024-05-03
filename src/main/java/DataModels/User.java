@@ -1,6 +1,7 @@
 package DataModels;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,7 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class User implements Serializable {
@@ -26,8 +30,8 @@ public class User implements Serializable {
 	@NotNull
 	private String password;
 	
-
 	@OneToMany(mappedBy = "owner",fetch=FetchType.LAZY)
+	@JsonManagedReference
 	private Set<Board> ownedBoards;
 	
 	@ManyToMany(mappedBy = "collaborators" ,fetch=FetchType.LAZY)
@@ -43,6 +47,8 @@ public class User implements Serializable {
 	joinColumns = @JoinColumn(name = "card_id"), 
 	inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<Card> assignedCards;
+	
+
 	
 	public User() {
 		
