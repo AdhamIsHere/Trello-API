@@ -56,7 +56,7 @@ public class BoardService {
 	public Response inviteUserToBoard(@QueryParam("email") String email, @QueryParam("board") String boardName) {
 		try {
 			TypedQuery<Board> query = em.createQuery(
-					"SELECT b FROM Board b JOIN FETCH b.cardLists JOIN FETCH b.collaborators WHERE b.name = :name",
+					"SELECT b FROM Board b LEFT JOIN FETCH b.cardLists LEFT JOIN FETCH b.collaborators WHERE b.name = :name",
 					Board.class);
 			query.setParameter("name", boardName);
 			List<Board> board = query.getResultList();

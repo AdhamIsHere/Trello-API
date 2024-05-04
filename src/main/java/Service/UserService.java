@@ -47,7 +47,6 @@ public class UserService {
 
 	
 	public Response createUser(User user) {
-
 		try {
 			// checking if user object is null
 			if (user == null) {

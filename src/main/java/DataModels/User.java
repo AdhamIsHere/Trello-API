@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -30,19 +31,19 @@ public class User implements Serializable {
 	@NotNull
 	private String password;
 	
-	@OneToMany(mappedBy = "owner",fetch=FetchType.LAZY)
+	@OneToMany(mappedBy = "owner",fetch=FetchType.EAGER)
 	@JsonManagedReference
 	private Set<Board> ownedBoards;
 	
-	@ManyToMany(mappedBy = "collaborators" ,fetch=FetchType.LAZY)
+	@ManyToMany(mappedBy = "collaborators" ,fetch=FetchType.EAGER)
 	private Set<Board> collaboratedBoards;
 	
 	
-	@OneToMany(mappedBy = "author",fetch=FetchType.LAZY)
+	@OneToMany(mappedBy = "author",fetch=FetchType.EAGER)
 	private Set<Comment> comments;
 	
 	
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(name ="UserXCard", 
 	joinColumns = @JoinColumn(name = "card_id"), 
 	inverseJoinColumns = @JoinColumn(name = "user_id"))
@@ -99,7 +100,7 @@ public class User implements Serializable {
 	public void setOwnedBoards(Set<Board> ownedBoards) {
 		this.ownedBoards = ownedBoards;
 	}
-	
+
 	public Set<Board> getCollaboratedBoards() {
 		return collaboratedBoards;
 	}
