@@ -1,8 +1,10 @@
 package DataModels;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import Serializers.BoardOwnerSerializer;
+import Serializers.CardListSerializer;
 import Serializers.CollaboratorsSerializer;
 
 @Entity
@@ -40,6 +44,7 @@ public class Board implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ownerId")
 	@JsonBackReference
+	@JsonSerialize(using = BoardOwnerSerializer.class)
 	private User owner;
 
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -49,8 +54,10 @@ public class Board implements Serializable{
 	@JsonSerialize(contentUsing = CollaboratorsSerializer.class)
 	private Set<User> collaborators;
 
-	@OneToMany(mappedBy = "board",fetch=FetchType.EAGER)
-	private Set<CardList> cardLists;
+	@OneToMany(mappedBy = "board",fetch=FetchType.EAGER ,cascade = CascadeType.ALL, orphanRemoval = true)
+	//@JsonSerialize(using = CardListSerializer.class)
+	@JsonManagedReference
+	private Set<CardList> cardLists = new HashSet<CardList>();
 
 	public Board() {
 
@@ -106,6 +113,15 @@ public class Board implements Serializable{
 		cardList.setName(name);
 		cardLists.add(cardList);
 
+	}
+
+	public CardList getCardList(String name) {
+		for (CardList cardList : cardLists) {
+			if (cardList.getName().equals(name)) {
+				return cardList;
+			}
+		}
+		return null;
 	}
 
 }

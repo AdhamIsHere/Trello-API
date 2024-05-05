@@ -1,6 +1,7 @@
 package DataModels;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -25,7 +26,7 @@ public class Card implements Serializable{
 	CardList cardList;
 	
 	@OneToMany(mappedBy = "card",fetch = FetchType.LAZY)
-	Set<Comment> comments;
+	Set<Comment> comments = new HashSet<Comment>();
 	
 	@ManyToMany(mappedBy = "assignedCards" ,fetch = FetchType.LAZY)
 	Set<User> assignedUsers;

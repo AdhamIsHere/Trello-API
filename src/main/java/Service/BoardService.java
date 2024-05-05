@@ -9,6 +9,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -60,6 +61,13 @@ public class BoardService {
 					Board.class);
 			query.setParameter("name", boardName);
 			List<Board> board = query.getResultList();
+
+			// check if user is the owner of the board (leader)
+			if (loggedInUser.getLoggedUser().getUserId() != board.get(0).getOwner().getUserId()) {
+				return Response.status(Response.Status.UNAUTHORIZED).entity("You are not the owner of this board")
+						.type(MediaType.APPLICATION_JSON).build();
+			}
+
 			TypedQuery<User> query2 = em.createQuery(
 					"SELECT u FROM User u " + "LEFT JOIN FETCH u.collaboratedBoards " + "LEFT JOIN FETCH u.comments "
 							+ "LEFT JOIN FETCH u.assignedCards " + "LEFT JOIN FETCH u.ownedBoards "
@@ -94,6 +102,31 @@ public class BoardService {
 					Board.class);
 			List<Board> resultList = query.getResultList();
 			return Response.ok(resultList).type(MediaType.APPLICATION_JSON).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
+					.type(MediaType.APPLICATION_JSON).build();
+		}
+	}
+
+	public Response deleteBoard(String boardName) {
+		try {
+			TypedQuery<Board> query = em.createQuery("SELECT b FROM Board b WHERE b.name = :name", Board.class);
+			query.setParameter("name", boardName);
+			Board board = query.getSingleResult();
+
+			// check if user is the owner of the board (leader)
+			if (loggedInUser.getLoggedUser().getUserId() != board.getOwner().getUserId()) {
+				throw new NotAuthorizedException("You are not the owner of this board");
+			}
+
+			em.remove(board);
+			return Response.ok("Board: " + board.getName() + " deleted successfully").build();
+		} catch (NoResultException ex) {
+			return Response.status(Response.Status.NOT_FOUND).entity("Board not found: " + boardName)
+					.type(MediaType.APPLICATION_JSON).build();
+		} catch (NotAuthorizedException e) {
+			return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.APPLICATION_JSON)
+					.build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
 					.type(MediaType.APPLICATION_JSON).build();

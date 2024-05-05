@@ -1,6 +1,7 @@
 package DataModels;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -12,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class CardList implements Serializable{
 	
@@ -20,12 +23,14 @@ public class CardList implements Serializable{
 	private Long id;
 	private String name;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "board_id")
-	private Board board;
+	@JsonBackReference
+	private Board board = new Board();
 	
-	@OneToMany(mappedBy = "cardList" ,fetch = FetchType.LAZY)
-    private Set<Card> card;
+
+	@OneToMany(mappedBy = "cardList" ,fetch = FetchType.EAGER)
+    private Set<Card> cards = new HashSet<Card>();
     
 	public CardList() {
 
@@ -33,7 +38,7 @@ public class CardList implements Serializable{
 	
 	public CardList(String name, Set<Card> card) {
 		this.name = name;
-		this.card = card;
+		this.cards = card;
 	}
 	
 	public Long getId() {
@@ -52,18 +57,25 @@ public class CardList implements Serializable{
 		this.name = name;
 	}
 	
-	public Set<Card> getCard() {
-		return card;
+	public Set<Card> getCards() {
+		return cards;
 	}
 	
-	public void setCard(Set<Card> card) {
-		this.card = card;
+	public void setCards(Set<Card> card) {
+		this.cards = card;
 	}
 	
 	@Override
 	public String toString() {
-		return "CardList [id=" + id + ", name=" + name + ", card=" + card + "]";
+		return "CardList [id=" + id + ", name=" + name + ", card=" + cards + "]";
 	}
 	
+	public Board getBoard() {
+		return board;
+	}
+	
+	public void setBoard(Board board) {
+		this.board = board;
+	}
 
 }
