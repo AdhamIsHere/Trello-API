@@ -23,9 +23,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import Serializers.BoardOwnerSerializer;
 import Serializers.CardListSerializer;
-import Serializers.CollaboratorsSerializer;
+import Serializers.CustomUserSerializer;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
@@ -44,14 +43,14 @@ public class Board implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ownerId")
 	@JsonBackReference
-	@JsonSerialize(contentUsing = BoardOwnerSerializer.class)
+	@JsonSerialize(contentUsing = CustomUserSerializer.class)
 	private User owner;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "UserXBoard", 
 	joinColumns = @JoinColumn(name = "boardId"),
 	inverseJoinColumns = @JoinColumn(name = "userId"))
-	@JsonSerialize(contentUsing = CollaboratorsSerializer.class)
+	@JsonSerialize(contentUsing = CustomUserSerializer.class)
 	private Set<User> collaborators;
 
 	@OneToMany(mappedBy = "board",fetch=FetchType.EAGER ,cascade = CascadeType.ALL, orphanRemoval = true)

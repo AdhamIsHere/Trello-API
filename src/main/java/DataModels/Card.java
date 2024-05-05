@@ -17,7 +17,8 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import Serializers.AssigneeSerializer;
+import Serializers.CustomUserSerializer;
+
 
 @Entity
 public class Card implements Serializable {
@@ -38,7 +39,7 @@ public class Card implements Serializable {
 	Set<Comment> comments = new HashSet<Comment>();
 
 	@ManyToMany(mappedBy = "assignedCards", fetch = FetchType.EAGER)
-	@JsonSerialize(contentUsing = AssigneeSerializer.class)
+	@JsonSerialize(contentUsing = CustomUserSerializer.class)
 	Set<User> assignedUsers;
 
 	public Long getId() {

@@ -17,6 +17,9 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import Serializers.CommentsSerializer;
 
 @Entity
 public class User implements Serializable {
@@ -40,6 +43,7 @@ public class User implements Serializable {
 	
 	
 	@OneToMany(mappedBy = "author",fetch=FetchType.EAGER)
+	@JsonSerialize(contentUsing = CommentsSerializer.class)
 	private Set<Comment> comments;
 	
 	

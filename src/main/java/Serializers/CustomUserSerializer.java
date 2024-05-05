@@ -8,13 +8,13 @@ import DataModels.User;
 
 import java.io.IOException;
 
-public class CollaboratorsSerializer extends StdSerializer<User> {
+public class CustomUserSerializer extends StdSerializer<User> {
 
-    public CollaboratorsSerializer() {
+    public CustomUserSerializer() {
         this(null);
     }
 
-    public CollaboratorsSerializer(Class<User> t) {
+    public CustomUserSerializer(Class<User> t) {
         super(t);
     }
 
