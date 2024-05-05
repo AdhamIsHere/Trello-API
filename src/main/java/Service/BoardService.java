@@ -21,7 +21,7 @@ import DataModels.User;
 @Stateless
 public class BoardService {
 
-	@PersistenceContext(unitName = "hello")
+	@PersistenceContext(unitName = "trello")
 	EntityManager em;
 
 	@Inject

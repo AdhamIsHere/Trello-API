@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 import Service.CardListService;
 
 @Stateless
-@Path("/List")
+@Path("/list")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 

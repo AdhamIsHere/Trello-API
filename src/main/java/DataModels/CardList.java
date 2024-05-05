@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class CardList implements Serializable{
@@ -30,6 +31,7 @@ public class CardList implements Serializable{
 	
 
 	@OneToMany(mappedBy = "cardList" ,fetch = FetchType.EAGER)
+	@JsonManagedReference
     private Set<Card> cards = new HashSet<Card>();
     
 	public CardList() {

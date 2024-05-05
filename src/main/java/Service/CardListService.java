@@ -13,7 +13,7 @@ import DataModels.CardList;
 @Stateless
 public class CardListService {
 
-	@PersistenceContext(unitName = "hello")
+	@PersistenceContext(unitName = "trello")
 	EntityManager em;
 
 	@Inject

@@ -14,24 +14,27 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
-public class Card implements Serializable{
+public class Card implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
+	String title;
+
 	String description;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "cardList_id")
+	@JsonBackReference
 	CardList cardList;
-	
-	@OneToMany(mappedBy = "card",fetch = FetchType.LAZY)
+
+	@OneToMany(mappedBy = "card", fetch = FetchType.EAGER)
 	Set<Comment> comments = new HashSet<Comment>();
-	
-	@ManyToMany(mappedBy = "assignedCards" ,fetch = FetchType.LAZY)
+
+	@ManyToMany(mappedBy = "assignedCards", fetch = FetchType.EAGER)
 	Set<User> assignedUsers;
-	
-	
 
 	public Long getId() {
 		return id;
@@ -65,4 +68,19 @@ public class Card implements Serializable{
 		return assignedUsers;
 	}
 
+	public CardList getCardList() {
+		return cardList;
+	}
+
+	public void setCardList(CardList cardList) {
+		this.cardList = cardList;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 }
