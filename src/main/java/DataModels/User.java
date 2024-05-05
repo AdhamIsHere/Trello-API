@@ -125,8 +125,17 @@ public class User implements Serializable {
 		this.assignedCards = assignedCards;
 	}
 	
-	public Board getBoard(String boardName) {
+	public Board getOwnedBoard(String boardName) {
 		for (Board board : ownedBoards) {
+			if (board.getName().equals(boardName)) {
+				return board;
+			}
+		}
+		return null;
+	}
+	
+	public Board getCollaboratedBoard(String boardName) {
+		for (Board board : collaboratedBoards) {
 			if (board.getName().equals(boardName)) {
 				return board;
 			}

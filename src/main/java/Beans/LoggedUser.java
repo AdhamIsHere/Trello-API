@@ -31,8 +31,7 @@ public class LoggedUser implements Serializable {
 	public boolean isLoggedIn() {
 		return this.LoggedUser != null;
 	}
-	
-	
+
 	
 
 }

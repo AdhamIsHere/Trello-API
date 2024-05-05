@@ -132,6 +132,7 @@ public class UserService {
 
 
 	public Response getLoggedInUser() {
+		loggedInUser.setLoggedUser(em.find(User.class, loggedInUser.getLoggedUser().getUserId()));
 		return Response.ok(loggedInUser.getLoggedUser()).type(MediaType.APPLICATION_JSON).build();
 	}
 

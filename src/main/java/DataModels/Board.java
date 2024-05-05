@@ -44,7 +44,7 @@ public class Board implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ownerId")
 	@JsonBackReference
-	@JsonSerialize(using = BoardOwnerSerializer.class)
+	@JsonSerialize(contentUsing = BoardOwnerSerializer.class)
 	private User owner;
 
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -123,5 +123,6 @@ public class Board implements Serializable{
 		}
 		return null;
 	}
+	
 
 }
