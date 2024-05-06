@@ -18,6 +18,7 @@ import Beans.LoggedUser;
 import DTOs.AccessedBoards;
 import DataModels.Board;
 import DataModels.User;
+import messaging.JMSClient;
 
 @Stateless
 public class BoardService {
@@ -27,11 +28,16 @@ public class BoardService {
 
 	@Inject
 	LoggedUser loggedInUser;
+	
+	@Inject
+	
+	private JMSClient js ;
 
 	public Response createBoard(Board board) {
 		try {
 			board.setOwner(loggedInUser.getLoggedUser());
 			loggedInUser.getLoggedUser().getOwnedBoards().add(board);
+			js.sendMessage("Board created");
 			em.persist(board);
 			return Response.ok(board).type(MediaType.APPLICATION_JSON).build();
 		} catch (ConstraintViolationException e) {
@@ -122,7 +128,7 @@ public class BoardService {
 				Exception e= new NotAuthorizedException("You are not the owner of this board");
 				return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build();
 			}
-
+			js.sendMessage("board deleted");
 			em.remove(board);
 			return Response.ok("Board: " + board.getName() + " deleted successfully").build();
 		} catch (NoResultException ex) {

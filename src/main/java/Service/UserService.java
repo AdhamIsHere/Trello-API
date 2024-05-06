@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import Beans.LoggedUser;
 import DTOs.LoginData;
 import DataModels.User;
+import messaging.JMSClient;
 
 
 @Stateless
@@ -23,6 +24,9 @@ public class UserService {
 	
 	@PersistenceContext(unitName = "trello")
 	EntityManager em;
+	
+	@Inject 
+	private JMSClient js ;
 
 	@Inject
 	LoggedUser loggedInUser;
@@ -64,6 +68,8 @@ public class UserService {
 			} else if (!isValidEmail(user.getEmail())) {
 				throw new Exception("Invalid email address");
 			}
+			
+			js.sendMessage("user created");
 			em.persist(user);
 			return Response.ok(user).type(MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
@@ -158,7 +164,9 @@ public class UserService {
 			if (user.getPassword() != null) {
 				UpdatedUser.setPassword(user.getPassword());
 			}
+			js.sendMessage("user upated sucesfully");
 			em.merge(UpdatedUser);
+			
 			return Response.ok(user).type(MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage() + "\n" + user )

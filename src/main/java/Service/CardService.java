@@ -11,12 +11,17 @@ import DataModels.Card;
 import DataModels.CardList;
 import DataModels.Comment;
 import DataModels.User;
+import messaging.JMSClient;
 
 @Stateless
 public class CardService {
 
 	@Inject
 	LoggedUser loggedUser;
+	
+	@Inject 
+	private JMSClient js ;
+
 
 	@PersistenceContext(unitName = "trello")
 	EntityManager em;
@@ -33,6 +38,7 @@ public class CardService {
 					.setParameter("name", cardListName).setParameter("boardName", boardName).getSingleResult();
 
 			card.setCardList(cardList);
+			js.sendMessage("card is created sucsessfully");
 			em.persist(card);
 			return Response.ok(card).build();
 		} catch (Exception e) {
@@ -70,7 +76,7 @@ public class CardService {
 			if (newCardList == null) {
 				throw new Exception("New Card List not found");
 			}
-
+			js.sendMessage("the card has moved sucsessfully");
 			card.setCardList(newCardList); // Set the new card list for the card
 			em.merge(card);
 
@@ -117,6 +123,7 @@ public class CardService {
 
 			card.getAssignedUsers().add(user);
 			user.getAssignedCards().add(card);
+			js.sendMessage("card assigned");
 			return Response.ok("Card assigned to " + userEmail).build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
@@ -141,6 +148,7 @@ public class CardService {
 			}
 
 			card.setDescription(description);
+			js.sendMessage("description upated");
 			em.merge(card);
 			return Response.ok(card).build();
 		} catch (Exception e) {
@@ -164,6 +172,7 @@ public class CardService {
 			em.persist(newComment);
 			card.getComments().add(newComment);
 			em.merge(card);
+			js.sendMessage("comment added");
 			return Response.ok(card).build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();

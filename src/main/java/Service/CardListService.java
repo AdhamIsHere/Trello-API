@@ -14,6 +14,7 @@ import DTOs.Report;
 import DataModels.Board;
 import DataModels.Card;
 import DataModels.CardList;
+import messaging.JMSClient;
 
 @Stateless
 public class CardListService {
@@ -23,6 +24,11 @@ public class CardListService {
 
 	@Inject
 	LoggedUser loggedUser;
+	
+	@Inject 
+	private JMSClient js ;
+	
+	
 
 	// to get all card lists of a board
 	public Response getCardLists(String boardName) {
@@ -89,6 +95,7 @@ public class CardListService {
 
 			// Updating the board's list of card lists
 			board.getCardLists().add(newCardList);
+			js.sendMessage("added to boardlist");
 			em.merge(board);
 
 			return Response.ok(board).build();
@@ -136,6 +143,7 @@ public class CardListService {
 
 			// Deleting the card list
 			em.remove(cardList);
+			js.sendMessage("removed from boardlist");
 
 			return Response.ok(board).build();
 		} catch (Exception e) {
