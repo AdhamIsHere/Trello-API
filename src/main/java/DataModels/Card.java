@@ -26,8 +26,8 @@ public class Card implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 	String title;
-
 	String description;
+	String status;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "cardList_id")
@@ -56,6 +56,14 @@ public class Card implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+	
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Set<Comment> getComments() {

@@ -34,8 +34,8 @@ public class BoardController {
 
 	@GET
 	@Path("/myboards")
-	public Response getMyBoards() {
-		return boardService.getMyBoards();
+	public Response getAccessedBoards() {
+		return boardService.getAccessedBoards();
 	}
 
 	@POST

@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import Beans.LoggedUser;
+import DTOs.AccessedBoards;
 import DataModels.Board;
 import DataModels.User;
 
@@ -42,12 +43,14 @@ public class BoardService {
 		}
 	}
 
-	public Response getMyBoards() {
+	public Response getAccessedBoards() {
 		try {
-			TypedQuery<Board> query = em.createQuery("SELECT b FROM Board b WHERE b.owner = :owner", Board.class);
-			query.setParameter("owner", loggedInUser.getLoggedUser().getEmail());
-			List<Board> resultList = query.getResultList();
-			return Response.ok(resultList).type(MediaType.APPLICATION_JSON).build();
+			if (loggedInUser.getLoggedUser() == null) {
+				throw new Exception("User is not logged in");
+			}
+			loggedInUser.setLoggedUser(em.find(User.class, loggedInUser.getLoggedUser().getUserId()));
+			AccessedBoards accessedBoards = new AccessedBoards(loggedInUser.getLoggedUser());
+			return Response.ok(accessedBoards).type(MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
 					.type(MediaType.APPLICATION_JSON).build();
@@ -116,7 +119,8 @@ public class BoardService {
 
 			// check if user is the owner of the board (leader)
 			if (loggedInUser.getLoggedUser().getUserId() != board.getOwner().getUserId()) {
-				throw new NotAuthorizedException("You are not the owner of this board");
+				Exception e= new NotAuthorizedException("You are not the owner of this board");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build();
 			}
 
 			em.remove(board);

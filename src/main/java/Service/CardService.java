@@ -169,5 +169,39 @@ public class CardService {
 			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
+	
+	public Response updateCard(Long cardId,Card card ) {
+		try {
+            // check if user is logged in
+            if (!loggedUser.isLoggedIn()) {
+                throw new Exception("Log in first");
+            }
+            Card oldCard = em.find(Card.class, cardId); // Find the card by its ID
+            if (oldCard == null) {
+                throw new Exception("Card not found");
+            }
+            // check if logged in user is neither a collaborator nor owner on the same board
+            if (loggedUser.getLoggedUser().getCollaboratedBoard(oldCard.getCardList().getBoard().getName()) == null &&
+                loggedUser.getLoggedUser().getOwnedBoard(oldCard.getCardList().getBoard().getName()) == null) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity("You are not a collaborator or owner on the same board").build();
+            }
+            
+            if(card.getTitle() != null) {
+            	                oldCard.setTitle(card.getTitle());
+            }
+			if (card.getDescription() != null) {
+				oldCard.setDescription(card.getDescription());
+			}
+			if (card.getStatus() != null) {
+				oldCard.setStatus(card.getStatus());
+            }
+         
+            em.merge(oldCard);
+            return Response.ok(oldCard).build();
+        } catch (Exception e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
+    
+	}
 
 }

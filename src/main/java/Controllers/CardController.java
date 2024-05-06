@@ -44,7 +44,7 @@ public class CardController {
 	}
 	
 	@PUT
-	@Path("/update/description")
+	@Path("/addDescription")
 	public Response updateDescription(@QueryParam("cardId") Long cardId,
 			String description) {
 		return cardService.updateDescription(cardId, description);
@@ -54,6 +54,12 @@ public class CardController {
 	@Path("/addComment")
 	public Response addComment(@QueryParam("cardId") Long cardId, String comment) {
 		return cardService.addComment(cardId, comment);
+	}
+	
+	@PUT
+	@Path("/updateCard")
+	public Response updateCard(@QueryParam("cardId") Long cardId, Card card) {
+		return cardService.updateCard(cardId, card);
 	}
 	
 }
