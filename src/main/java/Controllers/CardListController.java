@@ -44,9 +44,15 @@ public class CardListController {
 		return cardListService.deleteCardListFromBoard(boardName, cardListName);
 	}
 	
-//	@PUT
-//	@Path("/end/{id}")
-//	public Response endSprint(@PathParam("id") Long cardListId, @QueryParam("new name") String name) {
-//		return cardListService.endSprint(cardListId,name);
-//	}
+	@PUT
+	@Path("/end/{id}")
+	public Response endSprint(@PathParam("id") Long cardListId, @QueryParam("new_name") String name) {
+		return cardListService.endSprint(cardListId,name);
+	}
+	
+	@GET
+	@Path("/report/{id}")
+	public Response report(@PathParam("id") Long cardListId) {
+		return cardListService.getReport(cardListId);
+	}
 }

@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.Response;
 
 import Beans.LoggedUser;
+import DTOs.Report;
 import DataModels.Board;
 import DataModels.Card;
 import DataModels.CardList;
@@ -142,45 +143,71 @@ public class CardListService {
 		}
 	}
 
-//	//BONUS TASK
-//	
-//	public Response endSprint(Long id,String newName) {
-//		try {
-//			// Checking if user is logged in
-//			if (!loggedUser.isLoggedIn()) {
-//				throw new Exception("User is not logged in");
-//			}
-//
-//			// Checking if sprintId is null
-//			if (id == null) {
-//				throw new Exception("Sprint ID is null");
-//			}
-//
-//			// Retrieving the cardList from the database
-//			CardList sprint = em.find(CardList.class, id);
-//			if (sprint == null) {
-//				throw new Exception("Sprint does not exist");
-//			}
-//
-//			// Checking if the logged-in user is the owner of the board
-//			if (loggedUser.getLoggedUser().getOwnedBoard(sprint.getBoard().getName()) == null) {
-//				throw new Exception("You are not the owner of the board");
-//			}
-//			
-//			CardList newSprint = new CardList();
-//			newSprint.setName(newName);
-//			for (Card card : sprint.getCards()) {
-//				if (!card.getStatus().toLowerCase().equals("done")) {
-//					newSprint.getCards().add(card);
-//				}
-//			}
-//			em.persist(newSprint);
-//			em.remove(sprint);
-//			return Response.ok(sprint).build();
-//		} catch (Exception e) {
-//			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-//		}
-//	}
-	
-	
+	// BONUS TASK
+
+	public Response endSprint(Long id, String newName) {
+		try {
+			// Checking if user is logged in
+			if (!loggedUser.isLoggedIn()) {
+				throw new Exception("User is not logged in");
+			}
+
+			// Checking if sprintId is null
+			if (id == null) {
+				throw new Exception("Sprint ID is null");
+			}
+
+			// Retrieving the cardList from the database
+			CardList sprint = em.find(CardList.class, id);
+			if (sprint == null) {
+				throw new Exception("Sprint does not exist");
+			}
+
+			// Checking if the logged-in user is the owner of the board
+			if (loggedUser.getLoggedUser().getOwnedBoard(sprint.getBoard().getName()) == null) {
+				throw new Exception("You are not the owner of the board");
+			}
+
+			CardList newSprint = new CardList();
+			newSprint.setName(newName);
+			newSprint.setBoard(sprint.getBoard());
+			for (Card card : sprint.getCards()) {
+				if (!card.getStatus().toLowerCase().equals("done")) {
+					newSprint.getCards().add(card);
+				}
+			}
+			em.persist(newSprint);
+			em.remove(sprint);
+			return Response.ok(newSprint).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		}
+	}
+
+	public Response getReport(Long id) {
+		try {
+			// Checking if user is logged in
+            if (!loggedUser.isLoggedIn()) {
+                throw new Exception("User is not logged in");
+            }
+
+            // Checking if sprintId is null
+            if (id == null) {
+                throw new Exception("CardList ID is null");
+            }
+
+            // Retrieving the cardList from the database
+            CardList cardList = em.find(CardList.class, id);
+			if (cardList == null) {
+				throw new Exception("CardList does not exist");
+			}
+			
+			Report report = new Report();
+            report.generateReport(cardList);
+            return Response.ok(report).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		}
+	}
+
 }
