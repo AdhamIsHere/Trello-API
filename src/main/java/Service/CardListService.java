@@ -95,7 +95,7 @@ public class CardListService {
 
 			// Updating the board's list of card lists
 			board.getCardLists().add(newCardList);
-			js.sendMessage("added to boardlist");
+			js.sendMessage("added new card list to board : "+boardName);
 			em.merge(board);
 
 			return Response.ok(board).build();
@@ -186,6 +186,7 @@ public class CardListService {
 			}
 			em.persist(newSprint);
 			em.remove(sprint);
+			js.sendMessage("sprint ("+id+") ended and new sprint created with name : "+newName);
 			return Response.ok(newSprint).build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();

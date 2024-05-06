@@ -30,7 +30,7 @@ public class QueueListener implements MessageListener {
 			if(recivedMessage instanceof TextMessage) 
 			{
 				msg = (TextMessage) recivedMessage ;
-				System.out.println("the message that was recieved" + msg.getText());
+				System.out.println("the message that was recieved : " + msg.getText());
 				
 			}
 		}

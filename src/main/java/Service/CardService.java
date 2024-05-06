@@ -20,7 +20,7 @@ public class CardService {
 	LoggedUser loggedUser;
 	
 	@Inject 
-	private JMSClient js ;
+	JMSClient js ;
 
 
 	@PersistenceContext(unitName = "trello")
@@ -76,7 +76,6 @@ public class CardService {
 			if (newCardList == null) {
 				throw new Exception("New Card List not found");
 			}
-			js.sendMessage("the card has moved sucsessfully");
 			card.setCardList(newCardList); // Set the new card list for the card
 			em.merge(card);
 
@@ -84,6 +83,7 @@ public class CardService {
 			oldCardList.getCards().remove(card);
 			em.merge(oldCardList);
 
+			js.sendMessage("the card has moved sucsessfully to list : "+newCardListName);
 			return Response.ok("Card Moved to : " + card.getCardList().getName()).build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
@@ -123,7 +123,7 @@ public class CardService {
 
 			card.getAssignedUsers().add(user);
 			user.getAssignedCards().add(card);
-			js.sendMessage("card assigned");
+			js.sendMessage("card assigned to : "+userEmail);
 			return Response.ok("Card assigned to " + userEmail).build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
@@ -148,7 +148,7 @@ public class CardService {
 			}
 
 			card.setDescription(description);
-			js.sendMessage("description upated");
+			js.sendMessage("description updated for card : "+cardId);
 			em.merge(card);
 			return Response.ok(card).build();
 		} catch (Exception e) {
@@ -206,6 +206,7 @@ public class CardService {
             }
          
             em.merge(oldCard);
+            js.sendMessage("card updated");
             return Response.ok(oldCard).build();
         } catch (Exception e) {
             return Response.serverError().entity(e.getMessage()).build();
