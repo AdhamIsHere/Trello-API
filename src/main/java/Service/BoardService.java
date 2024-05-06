@@ -119,7 +119,8 @@ public class BoardService {
 
 			// check if user is the owner of the board (leader)
 			if (loggedInUser.getLoggedUser().getUserId() != board.getOwner().getUserId()) {
-				throw new NotAuthorizedException("You are not the owner of this board");
+				Exception e= new NotAuthorizedException("You are not the owner of this board");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build();
 			}
 
 			em.remove(board);

@@ -10,13 +10,13 @@ import DataModels.Card;
 import DataModels.CardList;
 import DataModels.Comment;
 
-public class CardListSerializer extends StdSerializer<CardList> {
+public class CustomCardListSerializer extends StdSerializer<CardList> {
 
-	public CardListSerializer() {
+	public CustomCardListSerializer() {
 		this(null);
 	}
 
-	public CardListSerializer(Class<CardList> t) {
+	public CustomCardListSerializer(Class<CardList> t) {
 		super(t);
 	}
 
@@ -32,6 +32,7 @@ public class CardListSerializer extends StdSerializer<CardList> {
 			gen.writeStartObject();
 			gen.writeNumberField("id", card.getId());
 			gen.writeStringField("description", card.getDescription());
+			gen.writeStringField("status", card.getStatus());
 			
 			// write comments in card
 			gen.writeArrayFieldStart("comments");
