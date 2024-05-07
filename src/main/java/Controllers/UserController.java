@@ -40,7 +40,8 @@ public class UserController {
 
     @GET
     @Path("/all")
-    public Response getAllUsers() {
+    public Response getAllUsers() 
+    {
         return userService.getAllUsers();
     }
 
