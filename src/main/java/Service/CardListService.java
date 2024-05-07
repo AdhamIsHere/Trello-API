@@ -152,7 +152,7 @@ public class CardListService {
 	}
 
 	// BONUS TASK
-
+	
 	public Response endSprint(Long id, String newName) {
 		try {
 			// Checking if user is logged in

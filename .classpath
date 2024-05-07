@@ -9,8 +9,8 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/JBoss EAP 7.3 Runtime"/>
-	<classpathentry kind="lib" path="G:/Eclipse/Eclipse_Workspace/jackson-annotations-2.17.0.jar"/>
-	<classpathentry kind="lib" path="G:/Eclipse/Eclipse_Workspace/jackson-core-2.17.0.jar"/>
-	<classpathentry kind="lib" path="G:/Eclipse/Eclipse_Workspace/jackson-databind-2.11.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rabbit/Documents/GitHub/jackson-annotations-2.17.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rabbit/Documents/GitHub/jackson-core-2.17.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/rabbit/Documents/GitHub/jackson-databind-2.11.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

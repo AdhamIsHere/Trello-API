@@ -25,7 +25,7 @@ public class CardService {
 
 	@PersistenceContext(unitName = "trello")
 	EntityManager em;
-
+	
 	public Response createCard(String boardName, String cardListName, Card card) {
 		try {
 			// check if user is logged in
