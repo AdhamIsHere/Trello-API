@@ -16,8 +16,8 @@ public class Report {
 	public Report(String boardName, String cardListName, int totalFinishedCards, int totalUnfinishedCards) {
 		this.boardName = boardName;
 		this.cardListName = cardListName;
-		TotalFinishedCards = totalFinishedCards;
-		TotalUnfinishedCards = totalUnfinishedCards;
+		this.TotalFinishedCards = totalFinishedCards;
+		this.TotalUnfinishedCards = totalUnfinishedCards;
 	}
 
 	public String getBoardName() {

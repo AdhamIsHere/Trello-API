@@ -1,4 +1,4 @@
-package messaging;
+package Messaging;
 
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;

@@ -54,7 +54,6 @@ public class Board implements Serializable{
 	private Set<User> collaborators;
 
 	@OneToMany(mappedBy = "board",fetch=FetchType.EAGER ,cascade = CascadeType.ALL, orphanRemoval = true)
-	//@JsonSerialize(using = CardListSerializer.class)
 	@JsonManagedReference
 	private Set<CardList> cardLists = new HashSet<CardList>();
 

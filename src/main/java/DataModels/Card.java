@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -34,7 +35,7 @@ public class Card implements Serializable {
 	@JsonBackReference
 	CardList cardList;
 
-	@OneToMany(mappedBy = "card", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "card", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
 	@JsonSerialize(contentUsing = Serializers.CommentsSerializer.class)
 	Set<Comment> comments = new HashSet<Comment>();
 

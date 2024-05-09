@@ -11,6 +11,7 @@ import DataModels.User;
 @SessionScoped
 @Named
 @Stateful
+// this is a bean to store currently logged user during the session
 public class LoggedUser implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

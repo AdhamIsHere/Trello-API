@@ -11,24 +11,22 @@ import DataModels.Card;
 import DataModels.CardList;
 import DataModels.Comment;
 import DataModels.User;
-import messaging.JMSClient;
+import Messaging.JMSClient;
 
 @Stateless
 public class CardService {
 
 	@Inject
 	LoggedUser loggedUser;
-	
-	@Inject 
-	JMSClient js ;
 
+	@Inject
+	JMSClient js;
 
 	@PersistenceContext(unitName = "trello")
 	EntityManager em;
-	
+
 	public Response createCard(String boardName, String cardListName, Card card) {
 		try {
-			// check if user is logged in
 			if (!loggedUser.isLoggedIn()) {
 				throw new Exception("Log in first");
 			}
@@ -38,7 +36,7 @@ public class CardService {
 					.setParameter("name", cardListName).setParameter("boardName", boardName).getSingleResult();
 
 			card.setCardList(cardList);
-			js.sendMessage("card is created sucsessfully");
+			js.sendMessage("card created sucsessfully : " + card);
 			em.persist(card);
 			return Response.ok(card).build();
 		} catch (Exception e) {
@@ -48,42 +46,37 @@ public class CardService {
 
 	public Response moveCard(String boardName, Long cardId, String newCardListName) {
 		try {
-			// check if user is logged in
 			if (!loggedUser.isLoggedIn()) {
 				throw new Exception("Log in first");
 
 			}
-			Card card = em.find(Card.class, cardId); // Find the card by its ID
+			Card card = em.find(Card.class, cardId);
 			if (card == null) {
 				throw new Exception("Card not found");
 			}
 
-			// check if logged in user is neither a collaborator nor owner on the same board
-			if (loggedUser.getLoggedUser().getCollaboratedBoard(card.getCardList().getBoard().getName()) == null &&
-			    loggedUser.getLoggedUser().getOwnedBoard(card.getCardList().getBoard().getName()) == null) {
-			    throw new Exception("You are not a collaborator or owner on the same board");
+			if (loggedUser.getLoggedUser().getCollaboratedBoard(card.getCardList().getBoard().getName()) == null
+					&& loggedUser.getLoggedUser().getOwnedBoard(card.getCardList().getBoard().getName()) == null) {
+				throw new Exception("You are not a collaborator or owner on the same board");
 			}
 
-
-			CardList oldCardList = card.getCardList(); // Get the old card list
+			CardList oldCardList = card.getCardList();
 
 			CardList newCardList = em
 					.createQuery("SELECT c FROM CardList c WHERE c.name = :name AND c.board.name = :boardName",
 							CardList.class)
 					.setParameter("name", newCardListName).setParameter("boardName", boardName).getSingleResult();
 
-			// if new card list is not found
 			if (newCardList == null) {
 				throw new Exception("New Card List not found");
 			}
-			card.setCardList(newCardList); // Set the new card list for the card
+			card.setCardList(newCardList);
 			em.merge(card);
 
-			// Remove the card from the old card list
 			oldCardList.getCards().remove(card);
 			em.merge(oldCardList);
 
-			js.sendMessage("the card has moved sucsessfully to list : "+newCardListName);
+			js.sendMessage("the card has moved sucsessfully to list : " + newCardListName);
 			return Response.ok("Card Moved to : " + card.getCardList().getName()).build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
@@ -93,11 +86,10 @@ public class CardService {
 	public Response assignCard(Long cardId, String userEmail) {
 		try {
 
-			// check if user is logged in
 			if (!loggedUser.isLoggedIn()) {
 				throw new Exception("Log in first");
 			}
-			Card card = em.find(Card.class, cardId); // Find the card by its ID
+			Card card = em.find(Card.class, cardId);
 			if (card == null) {
 				throw new Exception("Card not found");
 			}
@@ -110,12 +102,10 @@ public class CardService {
 			}
 			loggedUser.setLoggedUser(em.find(User.class, loggedUser.getLoggedUser().getUserId()));
 
-			// check if logged in user is neither a collaborator nor owner on the same board
-			if (loggedUser.getLoggedUser().getCollaboratedBoard(card.getCardList().getBoard().getName()) == null &&
-			    loggedUser.getLoggedUser().getOwnedBoard(card.getCardList().getBoard().getName()) == null) {
-			    throw new Exception("You are not a collaborator or owner on the same board");
+			if (loggedUser.getLoggedUser().getCollaboratedBoard(card.getCardList().getBoard().getName()) == null
+					&& loggedUser.getLoggedUser().getOwnedBoard(card.getCardList().getBoard().getName()) == null) {
+				throw new Exception("You are not a collaborator or owner on the same board");
 			}
-
 
 			if (!user.getCollaboratedBoards().contains(card.getCardList().getBoard())) {
 				throw new Exception("User is not a collaborator on the same board");
@@ -123,7 +113,7 @@ public class CardService {
 
 			card.getAssignedUsers().add(user);
 			user.getAssignedCards().add(card);
-			js.sendMessage("card assigned to : "+userEmail);
+			js.sendMessage("card assigned to : " + userEmail);
 			return Response.ok("Card assigned to " + userEmail).build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
@@ -132,23 +122,22 @@ public class CardService {
 
 	public Response updateDescription(Long cardId, String description) {
 		try {
-			// check if user is logged in
+
 			if (!loggedUser.isLoggedIn()) {
 				throw new Exception("Log in first");
 			}
-			Card card = em.find(Card.class, cardId); // Find the card by its ID
+			Card card = em.find(Card.class, cardId);
 			if (card == null) {
 				throw new Exception("Card not found");
 			}
-		
-			// check if logged in user is neither a collaborator nor owner on the same board
-			if (loggedUser.getLoggedUser().getCollaboratedBoard(card.getCardList().getBoard().getName()) == null &&
-			    loggedUser.getLoggedUser().getOwnedBoard(card.getCardList().getBoard().getName()) == null) {
-			    throw new Exception("You are not a collaborator or owner on the same board");
+
+			if (loggedUser.getLoggedUser().getCollaboratedBoard(card.getCardList().getBoard().getName()) == null
+					&& loggedUser.getLoggedUser().getOwnedBoard(card.getCardList().getBoard().getName()) == null) {
+				throw new Exception("You are not a collaborator or owner on the same board");
 			}
 
 			card.setDescription(description);
-			js.sendMessage("description updated for card : "+cardId);
+			js.sendMessage("description updated for card : " + cardId);
 			em.merge(card);
 			return Response.ok(card).build();
 		} catch (Exception e) {
@@ -158,60 +147,61 @@ public class CardService {
 
 	public Response addComment(Long cardId, String comment) {
 		try {
-			Card card = em.find(Card.class, cardId); // Find the card by its ID
+			Card card = em.find(Card.class, cardId);
 			if (card == null) {
 				throw new Exception("Card not found");
 			}
-			// check if logged in user is neither a collaborator nor owner on the same board
-			if (loggedUser.getLoggedUser().getCollaboratedBoard(card.getCardList().getBoard().getName()) == null &&
-			    loggedUser.getLoggedUser().getOwnedBoard(card.getCardList().getBoard().getName()) == null) {
-			    throw new Exception("You are not a collaborator or owner on the same board");
+
+			if (loggedUser.getLoggedUser().getCollaboratedBoard(card.getCardList().getBoard().getName()) == null
+					&& loggedUser.getLoggedUser().getOwnedBoard(card.getCardList().getBoard().getName()) == null) {
+				throw new Exception("You are not a collaborator or owner on the same board");
 			}
 
 			Comment newComment = new Comment(comment, loggedUser.getLoggedUser());
 			em.persist(newComment);
 			card.getComments().add(newComment);
 			em.merge(card);
-			js.sendMessage("comment added");
+			js.sendMessage("comment added to : " + cardId);
 			return Response.ok(card).build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
-	
-	public Response updateCard(Long cardId,Card card ) {
+
+	public Response updateCard(Long cardId, Card card) {
 		try {
-            // check if user is logged in
-            if (!loggedUser.isLoggedIn()) {
-                throw new Exception("Log in first");
-            }
-            Card oldCard = em.find(Card.class, cardId); // Find the card by its ID
-            if (oldCard == null) {
-                throw new Exception("Card not found");
-            }
-            // check if logged in user is neither a collaborator nor owner on the same board
-            if (loggedUser.getLoggedUser().getCollaboratedBoard(oldCard.getCardList().getBoard().getName()) == null &&
-                loggedUser.getLoggedUser().getOwnedBoard(oldCard.getCardList().getBoard().getName()) == null) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity("You are not a collaborator or owner on the same board").build();
-            }
-            
-            if(card.getTitle() != null) {
-            	                oldCard.setTitle(card.getTitle());
-            }
+
+			if (!loggedUser.isLoggedIn()) {
+				throw new Exception("Log in first");
+			}
+			Card oldCard = em.find(Card.class, cardId);
+			if (oldCard == null) {
+				throw new Exception("Card not found");
+			}
+
+			if (loggedUser.getLoggedUser().getCollaboratedBoard(oldCard.getCardList().getBoard().getName()) == null
+					&& loggedUser.getLoggedUser().getOwnedBoard(oldCard.getCardList().getBoard().getName()) == null) {
+				return Response.status(Response.Status.UNAUTHORIZED)
+						.entity("You are not a collaborator or owner on the same board").build();
+			}
+
+			if (card.getTitle() != null) {
+				oldCard.setTitle(card.getTitle());
+			}
 			if (card.getDescription() != null) {
 				oldCard.setDescription(card.getDescription());
 			}
 			if (card.getStatus() != null) {
 				oldCard.setStatus(card.getStatus());
-            }
-         
-            em.merge(oldCard);
-            js.sendMessage("card updated");
-            return Response.ok(oldCard).build();
-        } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
-        }
-    
+			}
+
+			em.merge(oldCard);
+			js.sendMessage("card updated : " + oldCard);
+			return Response.ok(oldCard).build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.getMessage()).build();
+		}
+
 	}
 
 }

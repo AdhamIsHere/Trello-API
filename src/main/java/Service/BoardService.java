@@ -18,7 +18,7 @@ import Beans.LoggedUser;
 import DTOs.AccessedBoards;
 import DataModels.Board;
 import DataModels.User;
-import messaging.JMSClient;
+import Messaging.JMSClient;
 
 @Stateless
 public class BoardService {
@@ -30,15 +30,14 @@ public class BoardService {
 	LoggedUser loggedInUser;
 	
 	@Inject
-	
-	private JMSClient js ;
+	JMSClient js ;
 
 	public Response createBoard(Board board) {
 		try {
 			board.setOwner(loggedInUser.getLoggedUser());
 			loggedInUser.getLoggedUser().getOwnedBoards().add(board);
-			js.sendMessage("Board created");
 			em.persist(board);
+			js.sendMessage("Board created : "+board);
 			return Response.ok(board).type(MediaType.APPLICATION_JSON).build();
 		} catch (ConstraintViolationException e) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).type(MediaType.APPLICATION_JSON)
@@ -92,6 +91,7 @@ public class BoardService {
 						.type(MediaType.APPLICATION_JSON).build();
 			}
 			board.get(0).getCollaborators().add(user);
+			js.sendMessage("user"+user.getEmail()+" invited to board : "+boardName);
 			return Response.ok(board).type(MediaType.APPLICATION_JSON).build();
 		} catch (NoResultException ex) {
 
@@ -128,7 +128,7 @@ public class BoardService {
 				Exception e= new NotAuthorizedException("You are not the owner of this board");
 				return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build();
 			}
-			js.sendMessage("board deleted");
+			js.sendMessage("board deleted : "+board);
 			em.remove(board);
 			return Response.ok("Board: " + board.getName() + " deleted successfully").build();
 		} catch (NoResultException ex) {
