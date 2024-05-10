@@ -1,5 +1,6 @@
 package Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -135,7 +136,7 @@ public class CardListService {
 			cardList = em.merge(cardList);
 
 			em.remove(cardList);
-			js.sendMessage("removed from boardlist");
+			js.sendMessage(cardList.getName()+"removed from board Card list");
 
 			return Response.ok(board).build();
 		} catch (Exception e) {
@@ -144,48 +145,57 @@ public class CardListService {
 	}
 
 	// BONUS TASK
-
 	public Response endSprint(Long id, String newName) {
-		try {
-			
-			if (!loggedUser.isLoggedIn()) {
-				throw new Exception("User is not logged in");
-			}
+	    try {
+	        if (!loggedUser.isLoggedIn()) {
+	            throw new Exception("User is not logged in");
+	        }
 
-			if (id == null) {
-				throw new Exception("Sprint ID is null");
-			}
+	        if (id == null) {
+	            throw new Exception("Sprint ID is null");
+	        }
 
-		
-			CardList sprint = em.find(CardList.class, id);
-			if (sprint == null) {
-				throw new Exception("Sprint does not exist");
-			}
+	        CardList sprint = em.find(CardList.class, id);
+	        if (sprint == null) {
+	            throw new Exception("Sprint does not exist");
+	        }
 
-			if (loggedUser.getLoggedUser().getOwnedBoard(sprint.getBoard().getName()) == null) {
-				throw new Exception("You are not the owner of the board");
-			}
+	        if (loggedUser.getLoggedUser().getOwnedBoard(sprint.getBoard().getName()) == null) {
+	            throw new Exception("You are not the owner of the board");
+	        }
 
-			CardList newSprint = new CardList();
-			newSprint.setName(newName);
-			newSprint.setBoard(sprint.getBoard());
-			em.persist(newSprint);
-			CardService temp = new CardService();
-			for (Card card : sprint.getCards()) {
-				if (card.getStatus().equalsIgnoreCase("done")) {
-					temp.moveCard(sprint.getBoard().getName(),card.getId(), newName);
-				}
-			}
-			
-			deleteCardListFromBoard(sprint.getBoard().getName(), sprint.getName());
-			em.flush();
-			js.sendMessage("sprint ("+id+") ended and new sprint created with name : "+newName);
-			return Response.ok(newSprint).build();
-		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-		}
+	        CardList newSprint = new CardList();
+	        newSprint.setName(newName);
+	        newSprint.setBoard(sprint.getBoard());
+	        em.persist(newSprint);
+
+	        List<Card> cardsToMove = new ArrayList<>();
+
+	        for (Card card : sprint.getCards()) {
+	            if (!card.getStatus().equalsIgnoreCase("done")) {
+	                card.setCardList(newSprint);
+	                cardsToMove.add(card);
+	            }
+	        }
+
+	        for (Card card : cardsToMove) {
+	            sprint.getCards().remove(card);
+	            em.merge(card);
+	        }
+
+	        
+	        sprint.getBoard().getCardLists().remove(sprint);
+	        sprint.getBoard().getCardLists().add(newSprint);
+
+	       
+	        em.remove(sprint);
+
+	        js.sendMessage("Sprint (" + id + ") ended and new sprint created with name: " + newName);
+	        return Response.ok(newSprint).build();
+	    } catch (Exception e) {
+	        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+	    }
 	}
-
 	public Response getReport(Long id) {
 		try {
 	
