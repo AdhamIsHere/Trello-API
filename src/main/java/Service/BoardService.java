@@ -40,7 +40,7 @@ public class BoardService {
 			js.sendMessage("Board created : "+board);
 			return Response.ok(board).type(MediaType.APPLICATION_JSON).build();
 		} catch (ConstraintViolationException e) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).type(MediaType.APPLICATION_JSON)
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()+"\nBoard with same named exists").type(MediaType.APPLICATION_JSON)
 					.build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
@@ -62,7 +62,7 @@ public class BoardService {
 		}
 	}
 
-	public Response inviteUserToBoard(@QueryParam("email") String email, @QueryParam("board") String boardName) {
+	public Response inviteUserToBoard( String email, String boardName) {
 		try {
 			TypedQuery<Board> query = em.createQuery(
 					"SELECT b FROM Board b LEFT JOIN FETCH b.cardLists LEFT JOIN FETCH b.collaborators WHERE b.name = :name",
@@ -128,8 +128,8 @@ public class BoardService {
 				Exception e= new NotAuthorizedException("You are not the owner of this board");
 				return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build();
 			}
-			js.sendMessage("board deleted : "+board);
 			em.remove(board);
+			js.sendMessage("board deleted : "+board);
 			return Response.ok("Board: " + board.getName() + " deleted successfully").build();
 		} catch (NoResultException ex) {
 			return Response.status(Response.Status.NOT_FOUND).entity("Board not found: " + boardName)

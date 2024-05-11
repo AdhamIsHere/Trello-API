@@ -3,6 +3,7 @@ package Service;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.Response;
 
@@ -39,6 +40,8 @@ public class CardService {
 			js.sendMessage("card created sucsessfully : " + card);
 			em.persist(card);
 			return Response.ok(card).build();
+		} catch (NoResultException e) {
+			return Response.serverError().entity("Card List not found").build();
 		} catch (Exception e) {
 			return Response.serverError().build();
 		}
@@ -50,7 +53,9 @@ public class CardService {
 				throw new Exception("Log in first");
 
 			}
+
 			Card card = em.find(Card.class, cardId);
+
 			if (card == null) {
 				throw new Exception("Card not found");
 			}
@@ -67,9 +72,6 @@ public class CardService {
 							CardList.class)
 					.setParameter("name", newCardListName).setParameter("boardName", boardName).getSingleResult();
 
-			if (newCardList == null) {
-				throw new Exception("New Card List not found");
-			}
 			card.setCardList(newCardList);
 			em.merge(card);
 
@@ -78,6 +80,8 @@ public class CardService {
 
 			js.sendMessage("the card has moved sucsessfully to list : " + newCardListName);
 			return Response.ok("Card Moved to : " + card.getCardList().getName()).build();
+		} catch (NoResultException e) {
+			return Response.serverError().entity("New Card List not found").build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
 		}
@@ -93,13 +97,14 @@ public class CardService {
 			if (card == null) {
 				throw new Exception("Card not found");
 			}
-
-			User user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
-					.setParameter("email", userEmail).getSingleResult();
-
-			if (user == null) {
-				throw new Exception("User not found");
+			User user = null;
+			try {
+				user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+						.setParameter("email", userEmail).getSingleResult();
+			} catch (NoResultException e) {
+				return Response.serverError().entity("User not found").build();
 			}
+
 			loggedUser.setLoggedUser(em.find(User.class, loggedUser.getLoggedUser().getUserId()));
 
 			if (loggedUser.getLoggedUser().getCollaboratedBoard(card.getCardList().getBoard().getName()) == null
@@ -107,10 +112,14 @@ public class CardService {
 				throw new Exception("You are not a collaborator or owner on the same board");
 			}
 
-			if (!user.getCollaboratedBoards().contains(card.getCardList().getBoard())) {
-				throw new Exception("User is not a collaborator on the same board");
+			if (!user.getCollaboratedBoards().contains(card.getCardList().getBoard()) && !user.getOwnedBoards()
+                    .contains(card.getCardList().getBoard())) {
+				throw new Exception("User is not a collaborator or owner on the same board");
 			}
-
+			
+			if (card.getAssignedUsers().contains(user)) {
+				throw new Exception("User is already assigned to the card");
+			}
 			card.getAssignedUsers().add(user);
 			user.getAssignedCards().add(card);
 			js.sendMessage("card assigned to : " + userEmail);
@@ -137,8 +146,8 @@ public class CardService {
 			}
 
 			card.setDescription(description);
-			js.sendMessage("description updated for card : " + cardId);
 			em.merge(card);
+			js.sendMessage("description updated for card : " + cardId);
 			return Response.ok(card).build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();

@@ -26,7 +26,7 @@ public class UserService {
 	EntityManager em;
 	
 	@Inject 
-	private JMSClient js ;
+	JMSClient js ;
 
 	@Inject
 	LoggedUser loggedInUser;
@@ -63,8 +63,8 @@ public class UserService {
 				throw new Exception("Invalid email address");
 			}
 			
-			js.sendMessage("user created : "+user);
 			em.persist(user);
+			js.sendMessage("user created : "+user);
 			return Response.ok(user).type(MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage() + "\n" + user)
@@ -126,6 +126,10 @@ public class UserService {
 
 
 	public Response getLoggedInUser() {
+		if (loggedInUser.isLoggedIn() == false) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("no user is logged in")
+					.type(MediaType.APPLICATION_JSON).build();
+		}
 		loggedInUser.setLoggedUser(em.find(User.class, loggedInUser.getLoggedUser().getUserId()));
 		return Response.ok(loggedInUser.getLoggedUser()).type(MediaType.APPLICATION_JSON).build();
 	}
@@ -148,8 +152,8 @@ public class UserService {
 			if (user.getPassword() != null) {
 				UpdatedUser.setPassword(user.getPassword());
 			}
-			js.sendMessage("user upated sucesfully : "+user);
 			em.merge(UpdatedUser);
+			js.sendMessage("user updated sucesfully : "+user);
 			
 			return Response.ok(user).type(MediaType.APPLICATION_JSON).build();
 		} catch (Exception e) {

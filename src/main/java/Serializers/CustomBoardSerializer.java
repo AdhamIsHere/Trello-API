@@ -1,5 +1,7 @@
 package Serializers;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -17,7 +19,7 @@ public class CustomBoardSerializer extends StdSerializer<Board> {
 	}
 
 	@Override
-	public void serialize(Board board, JsonGenerator jgen, SerializerProvider provider) throws java.io.IOException {
+	public void serialize(Board board, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
 		jgen.writeStartObject();
 		jgen.writeNumberField("id", board.getBoardId());

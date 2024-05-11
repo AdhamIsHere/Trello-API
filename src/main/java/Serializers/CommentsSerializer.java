@@ -1,5 +1,9 @@
 package Serializers;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import DataModels.Comment;
@@ -15,8 +19,8 @@ public class CommentsSerializer extends StdSerializer<Comment> {
 	}
 
 	@Override
-	public void serialize(Comment comment, com.fasterxml.jackson.core.JsonGenerator jgen,
-			com.fasterxml.jackson.databind.SerializerProvider provider) throws java.io.IOException {
+	public void serialize(Comment comment, JsonGenerator jgen,
+			SerializerProvider provider) throws IOException {
 
 		jgen.writeStartObject();
 		jgen.writeNumberField("id", comment.getId());
