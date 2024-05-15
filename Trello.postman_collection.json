@@ -1,0 +1,802 @@
+{
+	"info": {
+		"_postman_id": "e1af09e6-ba53-43fb-8c74-0f9f89f13abb",
+		"name": "Trello",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31013399"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"email\": \"{{$randomExampleEmail}}\",\r\n    \"password\": \"{{$randomPassword}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/user/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/user/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"user",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"Test@Test.com\",\r\n    \"password\":\"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/user/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get logged in user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/user/loggedIn",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"user",
+								"loggedIn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user Info",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"abo7meeeed\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/user/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"user",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add test user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Test\",\r\n    \"email\": \"Test@Test.com\",\r\n    \"password\": \"123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/user/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add test user 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Test2\",\r\n    \"email\": \"Test2@Test.com\",\r\n    \"password\": \"123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/user/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Accessed Boards",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/board/myboards",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"board",
+								"myboards"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Board",
+			"item": [
+				{
+					"name": "Add board For logged in user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"name\":\"Board 1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/board/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"board",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add user to board",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/board/invite?email=Test2@Test.com&board=Board 1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"board",
+								"invite"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "Test2@Test.com"
+								},
+								{
+									"key": "board",
+									"value": "Board 1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All boards",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/board/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"board",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Board",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/board/delete?name=Board 2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"board",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Board 2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Card List",
+			"item": [
+				{
+					"name": "Delete card list from board",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/list/delete?board=Board 1&name=New Sprint",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"list",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "board",
+									"value": "Board 1"
+								},
+								{
+									"key": "name",
+									"value": "New Sprint"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add card list to board",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/list/create?board=Board 1&name=To Do",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"list",
+								"create"
+							],
+							"query": [
+								{
+									"key": "board",
+									"value": "Board 1"
+								},
+								{
+									"key": "name",
+									"value": "To Do"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "End sprint",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/list/end/1?new_name=New Sprint",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"list",
+								"end",
+								"1"
+							],
+							"query": [
+								{
+									"key": "new_name",
+									"value": "New Sprint"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/list/report/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"list",
+								"report",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Card",
+			"item": [
+				{
+					"name": "Add card to list in board",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Test Card 2\",\r\n    \"status\": \"in progress\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/card/create?board=Board 1&cardList=To Do",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"card",
+								"create"
+							],
+							"query": [
+								{
+									"key": "board",
+									"value": "Board 1"
+								},
+								{
+									"key": "cardList",
+									"value": "To Do"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Move Card",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/card/move?board=Board 1&cardId=1&newCardList=To Do too",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"card",
+								"move"
+							],
+							"query": [
+								{
+									"key": "board",
+									"value": "Board 1"
+								},
+								{
+									"key": "cardId",
+									"value": "1"
+								},
+								{
+									"key": "newCardList",
+									"value": "To Do too"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign card to user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/card/assign?cardId=1&email=Test2@Test.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"card",
+								"assign"
+							],
+							"query": [
+								{
+									"key": "cardId",
+									"value": "1"
+								},
+								{
+									"key": "email",
+									"value": "Test2@Test.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update card description",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "This is a new description too",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/card/addDescription?cardId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"card",
+								"addDescription"
+							],
+							"query": [
+								{
+									"key": "cardId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update card",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\":\"Done !\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/card/updateCard?cardId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"card",
+								"updateCard"
+							],
+							"query": [
+								{
+									"key": "cardId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comment",
+			"item": [
+				{
+					"name": "Add comment to card",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "this is a comment 1",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/comment/add?cardId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"comment",
+								"add"
+							],
+							"query": [
+								{
+									"key": "cardId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update comment",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "new comment",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/comment/update?cardId=1&commentId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"comment",
+								"update"
+							],
+							"query": [
+								{
+									"key": "cardId",
+									"value": "1"
+								},
+								{
+									"key": "commentId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete comment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Trello/rest/comment/delete?cardId=1&commentId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Trello",
+								"rest",
+								"comment",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "cardId",
+									"value": "1"
+								},
+								{
+									"key": "commentId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
